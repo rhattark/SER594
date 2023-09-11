@@ -41,18 +41,15 @@ def smooth(dat, cutoff=4):
         if i == 0:
             if (i + 1 < dat_len and smoothed_stable[i+1] < smoothed_stable[i]) or (i == dat_len - 1):
                 if dat[i] >= cutoff:
-                    print('1')
                     maximums[i] = 'X'
         # last element 
         elif i == dat_len - 1:
             if smoothed_stable[i] > smoothed_stable[i-1] and dat[i] >= cutoff:
-                print('2')
                 maximums[i] = 'X'
         # any middle element
         else:
             # easy peak
             if smoothed_stable[i-1] < smoothed_stable[i] > smoothed_stable[i+1] and dat[i] >= cutoff:
-                print('3')
                 maximums[i] = 'X'
             # plateau
             elif smoothed_stable[i] == smoothed_stable[i+1]:
@@ -64,7 +61,6 @@ def smooth(dat, cutoff=4):
                     continue
                 mid = plateau_start + (i - plateau_start) // 2
                 if dat[mid] >= cutoff:
-                    print('4')
                     maximums[mid] = 'X'
                 
         i += 1
