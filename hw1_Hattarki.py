@@ -15,7 +15,7 @@ def smooth(dat, cutoff=4):
     smoothed = []
     smoothed_stable = []
     maximums = ['-'] * dat_len
-    max_diff = []
+    max_diff = 0
 
     for idx in range(dat_len):
         cur_smoothed_val = 0
@@ -29,24 +29,32 @@ def smooth(dat, cutoff=4):
                 denominator += pascal[pascal_idx]
         
         cur_smoothed_val /= denominator
+        abs_diff = abs(cur_smoothed_val - dat[idx])
+        if abs_diff > max_diff:
+            max_diff = abs_diff
         smoothed.append(cur_smoothed_val)
         smoothed_stable.append(round(cur_smoothed_val * 10))
     
     i = 0
     while i < dat_len:
+        # first element
         if i == 0:
             if (i + 1 < dat_len and smoothed_stable[i+1] < smoothed_stable[i]) or (i == dat_len - 1):
                 if dat[i] >= cutoff:
                     print('1')
                     maximums[i] = 'X'
+        # last element 
         elif i == dat_len - 1:
             if smoothed_stable[i] > smoothed_stable[i-1] and dat[i] >= cutoff:
                 print('2')
                 maximums[i] = 'X'
+        # any middle element
         else:
+            # easy peak
             if smoothed_stable[i-1] < smoothed_stable[i] > smoothed_stable[i+1] and dat[i] >= cutoff:
                 print('3')
                 maximums[i] = 'X'
+            # plateau
             elif smoothed_stable[i] == smoothed_stable[i+1]:
                 plateau_start = i
                 while i+1 < dat_len-1 and smoothed_stable[i+1] == smoothed_stable[i]:
@@ -62,7 +70,7 @@ def smooth(dat, cutoff=4):
         i += 1
 
 
-    return smoothed, smoothed_stable, maximums, None
+    return smoothed, smoothed_stable, maximums, max_diff
 
 
 if __name__ == '__main__':
