@@ -2,9 +2,9 @@ import yaml
 import datetime
 import pickle
 
-__author__ = "TODO"
-__date__ = "TODO"
-__assignment = "SER*94: Homework 2 Q3"
+__author__ = "Rhishabh Hattarki"
+__date__ = "21 September 2023"
+__assignment = "SER594: Homework 2 Q3"
 
 
 def gradescope_preprocessor(input_filename, output_filename):
@@ -14,8 +14,25 @@ def gradescope_preprocessor(input_filename, output_filename):
     :param output_filename: Filename for pickle processed data.
     """
 
-    # TODO
-    pass
+    max_score = 0
+
+    with open(input_filename, 'r') as submission_file:
+        try:
+            submission = yaml.safe_load(submission_file)
+            
+            for _, sub_data in submission.items():
+                sub_total_score = 0
+
+                for test in sub_data[':results']['tests']:
+                    sub_total_score += test['max_score']
+
+                max_score = sub_total_score if sub_total_score > max_score else max_score
+
+            print('ASSIGNMENT INFO:')
+            print(f'Max score possible: {max_score}')
+
+        except yaml.YAMLError as error:
+            print(error)
 
 
 if __name__ == '__main__':
