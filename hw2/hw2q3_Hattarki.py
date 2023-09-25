@@ -20,6 +20,7 @@ def gradescope_preprocessor(input_filename, output_filename):
     max_score = 0
     criterias = []
     name_to_num_max = dict()
+    submitter_dict = dict()
 
     def validate_same_assess(sub_data):
         if len(name_to_num_max) != len(sub_data[':results']['tests']):
@@ -32,6 +33,14 @@ def gradescope_preprocessor(input_filename, output_filename):
             if num_max['number'] != test['number'] or num_max['max_score'] != test['max_score']:
                 return False
         return True
+    
+    def build_trace(times_and_trace, tests):
+        scores = []
+
+        for test in tests:
+            scores.append(test['score'])
+
+        times_and_trace['trace'].append(scores)
 
     with open(input_filename, 'r') as submission_file:
         try:
@@ -69,13 +78,26 @@ def gradescope_preprocessor(input_filename, output_filename):
                     submitter_sid = submitter[':sid']
                     print(f'{submitter_name} ({submitter_sid})')
 
+                sid_key = sub_data[':submitters'][0][':sid']
+                times_and_trace = {
+                    'times': [],
+                    'trace': []
+                }
                 dates_and_scores = []
 
                 for old_sub in sub_data[':history']:
                     if (not validate_same_assess(old_sub)):
                         raise ValidationError('Submission did not match rubric schema.')
-                    dates_and_scores.append((old_sub[':created_at'], old_sub[':score']))
-                dates_and_scores.append((sub_data[':created_at'], sub_data[':score']))
+                    old_sub_created_at = old_sub[':created_at']
+                    dates_and_scores.append((old_sub_created_at, old_sub[':score']))
+                    times_and_trace['times'].append(old_sub_created_at)
+                    build_trace(times_and_trace, old_sub[':results']['tests'])
+                sub_data_created_at = sub_data[':created_at']
+                dates_and_scores.append((sub_data_created_at, sub_data[':score']))
+                times_and_trace['times'].append(sub_data_created_at)
+                build_trace(times_and_trace, sub_data[':results']['tests'])
+                
+                submitter_dict[sid_key] = times_and_trace
 
                 if len(dates_and_scores) > 1:
                     date_diff = dates_and_scores[-1][0] - dates_and_scores[0][0]
@@ -85,6 +107,8 @@ def gradescope_preprocessor(input_filename, output_filename):
 
                 for date_, score_ in dates_and_scores:
                     print(f'\tsubmission at {date_} earned {score_}')
+            
+            print(submitter_dict)
 
         except yaml.YAMLError as error:
             print(error)
@@ -93,6 +117,6 @@ def gradescope_preprocessor(input_filename, output_filename):
 
 
 if __name__ == '__main__':
-    filename = "hw2q3_submission_metadata.yml"
+    filename = "hw2q3_submission_metadata2.yml"
     filename_out = "hw2q3_gradescope_processed.pickle"
     gradescope_preprocessor(filename, filename_out)
