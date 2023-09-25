@@ -21,6 +21,7 @@ def web_scrapping(url, classname):
     Manually: go to inspect element on the reviews and check the class of the element.
     Get and return the plain text (preferably in list format).
     """
+    print(f'Fetching data from {url} with class {classname}')
     review_list = []
     r = requests.get(url)
 
@@ -47,7 +48,9 @@ def preprocessing(reviews):
     Remove stopwords. (Stopwords are the lists in the nltk library that are trivial and not relevant to the context/text.)
     Perform lemmatization on the data.
     """
-    # TODO
+    print('Initiating preprocessing')
+    reviews['review'] = reviews['review'].str.lower()
+    print(reviews)
 
     # Return the dataframe with the processed data
     return None  # TODO
