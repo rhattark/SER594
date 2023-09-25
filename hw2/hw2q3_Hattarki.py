@@ -107,16 +107,17 @@ def gradescope_preprocessor(input_filename, output_filename):
 
                 for date_, score_ in dates_and_scores:
                     print(f'\tsubmission at {date_} earned {score_}')
-            
-            print(submitter_dict)
 
         except yaml.YAMLError as error:
             print(error)
         except ValidationError as error:
             print(error)
 
+    with open(filename_out, 'wb') as handle:
+        pickle.dump(submitter_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
 
 if __name__ == '__main__':
-    filename = "hw2q3_submission_metadata2.yml"
+    filename = "hw2q3_submission_metadata.yml"
     filename_out = "hw2q3_gradescope_processed.pickle"
     gradescope_preprocessor(filename, filename_out)
