@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+import re
+import string
 
 __author__ = "Rhishabh Suhas Hattarki"
 __date__ = "25 September 2023"
@@ -21,6 +23,7 @@ def web_scrapping(url, classname):
     Manually: go to inspect element on the reviews and check the class of the element.
     Get and return the plain text (preferably in list format).
     """
+
     print(f'Fetching data from {url} with class {classname}')
     review_list = []
     r = requests.get(url)
@@ -33,12 +36,16 @@ def web_scrapping(url, classname):
         for review in reviews:
             review_list.append(review.get_text())
 
+    print(f'Fetched data from {url}')
     return review_list
 
 
 def preprocessing(reviews):
     # Import nltk - only use nltk library to perform all the following processing.
     import nltk
+    from nltk.corpus import stopwords
+    from nltk.stem import WordNetLemmatizer
+
     """
     :param reviews: Reviews list
     :return: Dataframe with processed reviews
@@ -48,12 +55,39 @@ def preprocessing(reviews):
     Remove stopwords. (Stopwords are the lists in the nltk library that are trivial and not relevant to the context/text.)
     Perform lemmatization on the data.
     """
+    
     print('Initiating preprocessing')
-    reviews['review'] = reviews['review'].str.lower()
-    print(reviews)
+    nltk.download('stopwords')
+    nltk.download('wordnet')
+    processed = pd.DataFrame()
+    processed['review'] = reviews['review'].str.lower()
+    processed['review'] = processed['review'].str.replace(f'[{string.punctuation}]','', regex=True)
+    stop_words = set(stopwords.words('english'))
 
-    # Return the dataframe with the processed data
-    return None  # TODO
+    def remove_stopwords(given_str):
+        words = given_str.split(' ')
+        new_str = []
+        for word in words:
+            if word not in stop_words and len(word) > 0:
+                new_str.append(word)
+        return ' '.join(new_str)
+    
+    processed['review'] = processed['review'].apply(remove_stopwords)
+    lemmatizer = WordNetLemmatizer()
+    
+    def lemmatize(given_str):
+        words = given_str.split(' ')
+        new_str = []
+        for word in words:
+            new_str.append(lemmatizer.lemmatize(word))
+        return ' '.join(new_str)
+
+    processed['review'] = processed['review'].apply(lemmatize)
+    reviews['cleaned_review'] = processed['review']
+    
+    print('Done preprocessing')
+    print(reviews)
+    return reviews
 
 
 if __name__ == '__main__':
