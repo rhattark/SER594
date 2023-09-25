@@ -15,6 +15,7 @@ def gradescope_preprocessor(input_filename, output_filename):
     """
 
     max_score = 0
+    criterias = []
 
     with open(input_filename, 'r') as submission_file:
         try:
@@ -27,6 +28,7 @@ def gradescope_preprocessor(input_filename, output_filename):
                 for test in sub_data[':results']['tests']:
                     sub_total_score += test['max_score']
                     test_count += 1
+                    criterias.append(test['name'])
 
                 max_score = sub_total_score if sub_total_score > max_score else max_score
                 break
@@ -34,6 +36,8 @@ def gradescope_preprocessor(input_filename, output_filename):
             print('ASSIGNMENT INFO:')
             print(f'Max score possible: {max_score}')
             print(f'Number of criteria: {test_count}')
+            print(f'Criteria: {criterias}')
+            print(f'Number of submitters: {len(submission)}')
 
         except yaml.YAMLError as error:
             print(error)
