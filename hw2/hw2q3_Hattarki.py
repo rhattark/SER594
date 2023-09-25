@@ -6,6 +6,9 @@ __author__ = "Rhishabh Hattarki"
 __date__ = "21 September 2023"
 __assignment = "SER594: Homework 2 Q3"
 
+class ValidationError(Exception):
+    def __init__(self, message):
+        super().__init__(message)
 
 def gradescope_preprocessor(input_filename, output_filename):
     """
@@ -16,7 +19,19 @@ def gradescope_preprocessor(input_filename, output_filename):
 
     max_score = 0
     criterias = []
-    date_format = "%Y=%m=%d %H:%M:%S.%f%z"
+    name_to_num_max = dict()
+
+    def validate_same_assess(sub_data):
+        if len(name_to_num_max) != len(sub_data[':results']['tests']):
+            return False
+        
+        for test in sub_data[':results']['tests']:
+            if test['name'] not in name_to_num_max:
+                return False
+            num_max = name_to_num_max[test['name']]
+            if num_max['number'] != test['number'] or num_max['max_score'] != test['max_score']:
+                return False
+        return True
 
     with open(input_filename, 'r') as submission_file:
         try:
@@ -30,6 +45,10 @@ def gradescope_preprocessor(input_filename, output_filename):
                     sub_total_score += test['max_score']
                     test_count += 1
                     criterias.append(test['name'])
+                    name_to_num_max[test['name']] = {
+                        'number': test['number'],
+                        'max_score': test['max_score']
+                    }
 
                 max_score = sub_total_score if sub_total_score > max_score else max_score
                 break
@@ -42,6 +61,9 @@ def gradescope_preprocessor(input_filename, output_filename):
             print()
 
             for _, sub_data in submission.items():
+                if (not validate_same_assess(sub_data)):
+                    raise ValidationError('Submission did not match rubric schema.')
+
                 for submitter in sub_data[':submitters']:
                     submitter_name = submitter[':name']
                     submitter_sid = submitter[':sid']
@@ -50,6 +72,8 @@ def gradescope_preprocessor(input_filename, output_filename):
                 dates_and_scores = []
 
                 for old_sub in sub_data[':history']:
+                    if (not validate_same_assess(old_sub)):
+                        raise ValidationError('Submission did not match rubric schema.')
                     dates_and_scores.append((old_sub[':created_at'], old_sub[':score']))
                 dates_and_scores.append((sub_data[':created_at'], sub_data[':score']))
 
@@ -63,6 +87,8 @@ def gradescope_preprocessor(input_filename, output_filename):
                     print(f'\tsubmission at {date_} earned {score_}')
 
         except yaml.YAMLError as error:
+            print(error)
+        except ValidationError as error:
             print(error)
 
 
