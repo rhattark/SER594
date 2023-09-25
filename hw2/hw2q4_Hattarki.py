@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 
-__author__ = "TODO"
-__date__ = "TODO"
-__assignment = "SER*94: Homework 2 Q4 Programming"
+__author__ = "Rhishabh Suhas Hattarki"
+__date__ = "25 September 2023"
+__assignment = "SER594: Homework 2 Q4 Programming"
 
 
 def web_scrapping(url, classname):
@@ -21,10 +21,18 @@ def web_scrapping(url, classname):
     Manually: go to inspect element on the reviews and check the class of the element.
     Get and return the plain text (preferably in list format).
     """
-    # TODO
+    review_list = []
+    r = requests.get(url)
 
-    # Return the plain text (list)
-    return []  # TODO
+    if r.status_code == 200:
+        print('code 200, so far so good')
+        soup = BeautifulSoup(r.text, 'html.parser')
+        reviews = soup.findAll(class_=classname)
+
+        for review in reviews:
+            review_list.append(review.get_text())
+
+    return review_list
 
 
 def preprocessing(reviews):
@@ -47,8 +55,8 @@ def preprocessing(reviews):
 
 if __name__ == '__main__':
     # give your desired urls and classnames, preferably from yelp
-    url1, url2 = "", ""
-    classname1, classname2 = "", ""
+    url1, url2 = "https://www.yelp.com/biz/the-peppersauce-cafe-phoenix", "https://www.yelp.com/biz/wtf-burgers-phoenix?osq=Burgers"
+    classname1, classname2 = "comment__09f24__D0cxf css-qgunke", "comment__09f24__D0cxf css-qgunke"
 
     # Part 1
     review_list1 = web_scrapping(url1, classname1)
