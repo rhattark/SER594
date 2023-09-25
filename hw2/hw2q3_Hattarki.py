@@ -16,6 +16,7 @@ def gradescope_preprocessor(input_filename, output_filename):
 
     max_score = 0
     criterias = []
+    date_format = "%Y=%m=%d %H:%M:%S.%f%z"
 
     with open(input_filename, 'r') as submission_file:
         try:
@@ -38,6 +39,28 @@ def gradescope_preprocessor(input_filename, output_filename):
             print(f'Number of criteria: {test_count}')
             print(f'Criteria: {criterias}')
             print(f'Number of submitters: {len(submission)}')
+            print()
+
+            for _, sub_data in submission.items():
+                for submitter in sub_data[':submitters']:
+                    submitter_name = submitter[':name']
+                    submitter_sid = submitter[':sid']
+                    print(f'{submitter_name} ({submitter_sid})')
+
+                dates_and_scores = []
+
+                for old_sub in sub_data[':history']:
+                    dates_and_scores.append((old_sub[':created_at'], old_sub[':score']))
+                dates_and_scores.append((sub_data[':created_at'], sub_data[':score']))
+
+                if len(dates_and_scores) > 1:
+                    date_diff = dates_and_scores[-1][0] - dates_and_scores[0][0]
+                    print(f'\tsubmitted {len(dates_and_scores)} times over {date_diff}')
+                elif len(dates_and_scores) == 1:
+                    print(f'\tsubmitted 1 time')
+
+                for date_, score_ in dates_and_scores:
+                    print(f'\tsubmission at {date_} earned {score_}')
 
         except yaml.YAMLError as error:
             print(error)
