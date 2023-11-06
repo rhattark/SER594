@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.utils import shuffle
+import matplotlib.pyplot as plt
 
 __author__ = "Rhishabh Hattarki"
 __date__ = "6 November 2023"
@@ -16,6 +17,17 @@ def mean_squared_error(actual, predicted):
         error_sum += (cur_actual - cur_predicted) * (cur_actual - cur_predicted)
     
     return error_sum / len(actual)
+
+def plot_mse_over_iterations(mse_plot_data):
+    plot_data = np.matrix(mse_plot_data)
+    fig, ax = plt.subplots()
+    ax.plot(plot_data[:, 0], plot_data[:, 1])
+    ax.set_xlabel('Iterations')
+    ax.set_ylabel('Mean Squared Error')
+    ax.set_title('MSE over iteractions for alpha = 0.01')
+    plt.savefig('MSE_iterations_alpha_pt_01')
+    plt.show()
+
 
 def run_gd(input_filename, fraction_training=.8):
     """
@@ -49,6 +61,7 @@ def run_gd(input_filename, fraction_training=.8):
     w1 = 0 # slope
     N_train = X_train.shape[0]
     prev_mse = -1
+    mse_plot_data = []
 
     for cur_alpha in alpha:
         w0 = 0
@@ -70,6 +83,8 @@ def run_gd(input_filename, fraction_training=.8):
                 prev_mse = cur_mse
                 cur_mse = mean_squared_error(y_train, predictions)
                 print(f'\tMSE: {cur_mse}')
+                if cur_alpha == .01:
+                    mse_plot_data.append([i, cur_mse])
                 i+=1
             
             iterations.append(i)
@@ -100,6 +115,8 @@ def run_gd(input_filename, fraction_training=.8):
     print(f'\nw0: {w0}, w1: {w1}')
     print('\nTesting Data:')
     print(f'\tMSE: {final_mse}')
+
+    plot_mse_over_iterations(mse_plot_data)
 
 
 if __name__ == '__main__':
