@@ -46,6 +46,7 @@ def run_gd(input_filename, fraction_training=.8):
     w1 = 0 # slope
     N_train = X_train.shape[0]
 
+    # run gradient descent epochs number of times, check mse at each step
     for i in range(epochs):
         print(f'Iteration: {i}')
         dw0 = 1 / N_train * (-1) * sum(y_train - (w0 + w1 * X_train))
@@ -56,6 +57,12 @@ def run_gd(input_filename, fraction_training=.8):
         predictions = w1 * X_train + w0
         cur_mse = mean_squared_error(y_train, predictions)
         print(f'\tMSE: {cur_mse}')
+
+    final_predictions = w1 * X_test + w0
+    final_mse = mean_squared_error(y_test, final_predictions)
+    print(f'\nw0: {w0}, w1: {w1}')
+    print('\nTesting Data:')
+    print(f'\tMSE: {final_mse}')
 
 
 if __name__ == '__main__':
