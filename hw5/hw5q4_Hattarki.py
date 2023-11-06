@@ -38,9 +38,9 @@ def build_models(input_filename, fraction_training=.8):
     df = pd.read_csv(input_filename)
     random_state = 69
     shuffled_df = shuffle(df, random_state=random_state)
-    split_idx = int(fraction_training * len(df))
 
     # split data into train and test
+    split_idx = int(fraction_training * len(df))
     train_df = shuffled_df.iloc[:split_idx]
     test_df = shuffled_df.iloc[split_idx:]
     print(f'Used {len(train_df)} samples for training.')
