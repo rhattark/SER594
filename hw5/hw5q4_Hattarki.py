@@ -1,11 +1,11 @@
-# import pandas as pd
+import pandas as pd
 # from sklearn.linear_model import LinearRegression
 # from sklearn.utils import shuffle
 import numpy as np
 
-__author__ = "TODO"
-__date__ = "TODO"
-__assignment = "SER*94: Homework 5 Q4 Programming"
+__author__ = "Rhishabh Hattarki"
+__date__ = "6 November 2023"
+__assignment = "SER594: Homework 5 Q4 Programming"
 
 
 def build_models(input_filename, fraction_training=.8):
@@ -14,7 +14,9 @@ def build_models(input_filename, fraction_training=.8):
     :param input_filename: Filename for input datafile.
     """
 
-    # TODO
+    df = pd.read_csv(input_filename)
+    print(df.head())
+    
     pass
 
 
