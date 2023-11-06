@@ -28,16 +28,22 @@ def build_models(input_filename, fraction_training=.8):
     shuffled_df = shuffle(df, random_state=random_state)
     split_idx = int(fraction_training * len(df))
 
+    # split data into train and test
     train_df = shuffled_df.iloc[:split_idx]
     test_df = shuffled_df.iloc[split_idx:]
 
+    # separate X and y
     X_train = train_df.iloc[:, 0]
     X_test = test_df.iloc[:, 0]
     y_train = train_df.iloc[:, -1]
     y_test = test_df.iloc[:, -1]
 
     custom_weights = custom_linear_regression(X_train.values, y_train.values)
-    print(custom_weights)
+    print("custom weights", [x for x in custom_weights])
+    
+    sklearnLinReg = LinearRegression()
+    sklearnLinReg.fit(np.array(X_train).reshape(-1, 1), y_train)
+    print("sklearn weights", [sklearnLinReg.coef_[0], sklearnLinReg.intercept_])
     
     pass
 
