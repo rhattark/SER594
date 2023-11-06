@@ -34,6 +34,7 @@ def build_models(input_filename, fraction_training=.8):
     :param input_filename: Filename for input datafile.
     """
 
+    # load file and shuffle
     df = pd.read_csv(input_filename)
     random_state = 69
     shuffled_df = shuffle(df, random_state=random_state)
