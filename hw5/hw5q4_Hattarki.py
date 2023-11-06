@@ -1,6 +1,6 @@
 import pandas as pd
-# from sklearn.linear_model import LinearRegression
-# from sklearn.utils import shuffle
+from sklearn.linear_model import LinearRegression
+from sklearn.utils import shuffle
 import numpy as np
 
 __author__ = "Rhishabh Hattarki"
@@ -25,7 +25,7 @@ def build_models(input_filename, fraction_training=.8):
 
     df = pd.read_csv(input_filename)
     random_state = 69
-    shuffled_df = df.sample(frac=1, random_state=random_state)
+    shuffled_df = shuffle(df, random_state=random_state)
     split_idx = int(fraction_training * len(df))
 
     train_df = shuffled_df.iloc[:split_idx]
