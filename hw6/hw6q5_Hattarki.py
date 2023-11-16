@@ -1,9 +1,9 @@
 from sklearn.neighbors import KNeighborsClassifier
 import numpy as np
 
-__author__ = "TODO"
-__date__ = "TODO"
-__assignment = "SER*94: Homework 6 Q5 Programming"
+__author__ = "Rhishabh Suhas Hattarki"
+__date__ = "20 November 2023"
+__assignment = "SER594: Homework 6 Q5 Programming"
 
 
 def knn_numpy(y_train, y_test, x_train, x_test, k = 4, tests=30):
