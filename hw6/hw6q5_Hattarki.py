@@ -58,5 +58,5 @@ if __name__ == '__main__':
     # example usage of display_digit()
     # display_digit(x_train[0])
 
-    knn_numpy(y_train, y_test, x_train, x_test, 10000)
-    knn_sklearn(y_train, y_test, x_train, x_test, 10000)
+    knn_numpy(y_train, y_test, x_train, x_test, tests=300)
+    knn_sklearn(y_train, y_test, x_train, x_test, tests=300)
