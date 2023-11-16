@@ -1,11 +1,14 @@
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 import numpy as np
+import random
 
 __author__ = "Rhishabh Suhas Hattarki"
 __date__ = "20 November 2023"
 __assignment = "SER594: Homework 6 Q5 Programming"
 
+def euclidean_distance(first, second):
+    return np.linalg.norm(first - second)
 
 def knn_numpy(y_train, y_test, x_train, x_test, k = 4, tests=30):
     """
@@ -18,8 +21,26 @@ def knn_numpy(y_train, y_test, x_train, x_test, k = 4, tests=30):
     :param tests: Number of samples (start at index 0) to use when computing accuracy.
     :return:
     """
-    # TODO
-    pass
+    
+    predictions = []
+    
+    for i in range(tests):
+        dist_from_train_pts = [(euclidean_distance(x_test[i], train_pt), idx) for idx, train_pt in enumerate(x_train)]
+        closest_k_points = sorted(dist_from_train_pts, key=lambda x : x[0])[:k]
+        closest_dist = closest_k_points[0][0]
+        top_closest = []
+        for close_pt_dist, close_pt_idx in closest_k_points:
+            if close_pt_dist == closest_dist:
+                top_closest.append(close_pt_idx)
+            else:
+                break
+        if len(top_closest) > 1:
+            predictions.append(y_train[random.choice(top_closest)])
+        else:
+            predictions.append(y_train[top_closest[0]])
+    
+    accuracy = accuracy_score(y_test[:tests], predictions) * 100
+    print(f'Manual Accuracy: {accuracy}%')
 
 
 def knn_sklearn(y_train, y_test, x_train, x_test, k = 4, tests=30):
@@ -58,5 +79,5 @@ if __name__ == '__main__':
     # example usage of display_digit()
     # display_digit(x_train[0])
 
-    knn_numpy(y_train, y_test, x_train, x_test, tests=300)
-    knn_sklearn(y_train, y_test, x_train, x_test, tests=300)
+    knn_numpy(y_train, y_test, x_train, x_test, tests=100)
+    knn_sklearn(y_train, y_test, x_train, x_test, tests=100)
