@@ -1,4 +1,5 @@
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
 import numpy as np
 
 __author__ = "Rhishabh Suhas Hattarki"
@@ -25,8 +26,12 @@ def knn_sklearn(y_train, y_test, x_train, x_test, k = 4, tests=30):
     """
     See previous.
     """
-    # TODO
-    pass
+    
+    knn = KNeighborsClassifier(n_neighbors=k)
+    knn.fit(x_train, y_train)
+    y_pred = knn.predict(x_test[:tests])
+    accuracy = accuracy_score(y_test[:tests], y_pred) * 100
+    print(f'Sklearn Accuracy: {accuracy}%')
 
 
 # displays a digit using matplotlib. not needed for assignment, just provided for messing around.
@@ -53,5 +58,5 @@ if __name__ == '__main__':
     # example usage of display_digit()
     # display_digit(x_train[0])
 
-    knn_numpy(y_train, y_test, x_train, x_test)
-    knn_sklearn(y_train, y_test, x_train, x_test)
+    knn_numpy(y_train, y_test, x_train, x_test, 10000)
+    knn_sklearn(y_train, y_test, x_train, x_test, 10000)
